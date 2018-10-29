@@ -28,14 +28,10 @@ t = (2, 3)
 -- tupFun, tupFun' :: (Int, String) -> (Int, String) -> Int
 tupFun' t s = fst t + fst s
 
-tupFun t@(a, _) (c, _) = if a < c
-      then (a + c, "a war kleiner")
-      else t
+tupFun t@(a, _) (c, _) = if a < c then (a + c, "a war kleiner") else t
 
-fst4 :: (a, b, c, d) -> a
-fst4 (x, _, _, _) = x
-
-
+fst4 :: (Int, b, c, d) -> Int
+fst4 (x, _, _, _) = x + 2
 
 
 
