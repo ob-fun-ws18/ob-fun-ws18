@@ -55,3 +55,14 @@ myAbs' 2 = 2
 myAbs' x
   | x < 0 = -x
 myAbs' x = x
+
+safeDiv :: Integer -> Integer -> Maybe Integer
+safeDiv a 0 = Nothing
+safeDiv a b = Just $ a `div` b
+
+divInfo :: Integer -> Integer -> String
+divInfo a = maybe
+  "not possible"
+  (\x -> if x < 1 then "smaller" else "bigger")
+  . safeDiv a
+
