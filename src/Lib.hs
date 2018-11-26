@@ -1,3 +1,4 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Lib where
 
 someFunc :: IO ()
@@ -42,7 +43,7 @@ fst4 :: (Int, b, c, d) -> Int
 fst4 (x, _, _, _) = x + 2
 
 add'' :: Num a => (a, a) -> a
-add'' (x,y) = x + y
+add'' (x, y) = x + y
 
 
 data Trivial = Trivial
@@ -51,18 +52,57 @@ data Trivial = Trivial
 myAbs :: Int -> Int
 myAbs x = if x < 0 then -x else x
 
-myAbs' 2 = 2
-myAbs' x
-  | x < 0 = -x
-myAbs' x = x
+myAbs' 2         = 2
+myAbs' x | x < 0 = -x
+myAbs' x         = x
 
 safeDiv :: Integer -> Integer -> Maybe Integer
 safeDiv a 0 = Nothing
 safeDiv a b = Just $ a `div` b
 
 divInfo :: Integer -> Integer -> String
-divInfo a = maybe
-  "not possible"
-  (\x -> if x < 1 then "smaller" else "bigger")
-  . safeDiv a
+divInfo a =
+  maybe "not possible" (\x -> if x < 1 then "smaller" else "bigger") . safeDiv a
 
+data Points = Point
+   { pointX :: Int
+   , pointY :: Int
+   }
+
+ | Point3
+  { point3X :: Int
+  , point3Y :: Int
+  , point3Z :: Int
+  }
+  deriving Show
+
+
+xs =
+  [ "Hallo ksjhsadkjhdskajhdaskjhdskjdhaskjdashkdasjhdaskjhdsakjh"
+  , "Weltsakjhadskjdhsakjdahskdsjahdsakjdaskjh"
+  ]
+getX :: Points -> Int
+getX (Point x _) = x
+
+setX :: Points -> Int -> Points
+setX (Point _ y) x = Point x y
+
+newtype Grade = Grade { unGrade :: Int }
+  deriving Show
+
+addGrades :: Grade -> Grade -> Grade
+addGrades x y = Grade $ unGrade x + unGrade y
+
+newtype Students = Students Int
+  deriving (Headcount)
+
+newtype Staff = Staff
+  { staffHeadcount :: Int
+  }
+  deriving (Headcount)
+
+class Headcount a where
+  headcount :: a -> Int
+
+instance Headcount Int where
+  headcount i = i
