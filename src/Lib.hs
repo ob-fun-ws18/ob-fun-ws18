@@ -94,7 +94,7 @@ addGrades :: Grade -> Grade -> Grade
 addGrades x y = Grade $ unGrade x + unGrade y
 
 newtype Students = Students Int
-  deriving (Headcount)
+  deriving (Headcount, Show)
 
 newtype Staff = Staff
   { staffHeadcount :: Int
@@ -106,3 +106,37 @@ class Headcount a where
 
 instance Headcount Int where
   headcount i = i
+
+-- Monoide
+
+appendMaybe Nothing  y        = y
+appendMaybe x        Nothing  = x
+appendMaybe (Just x) (Just y) = Just $ x ++ y
+
+instance Semigroup Students where
+  Students x <> Students y = Students $ x + y
+
+instance Monoid Students where
+  mempty = Students 0
+
+data StudentGroups = StudentGroups
+    { maxMembersPerGroup :: Int
+    , groups :: [Int]
+    }
+  deriving Show
+
+mkStudentGroups :: Int -> Students -> StudentGroups
+mkStudentGroups size (Students i) =
+  let first = i `mod` size
+      rest  = replicate (i `div` size) size
+  in  StudentGroups size $ if first /= 0 then first : rest else rest
+
+
+
+instance Semigroup StudentGroups where
+    (StudentGroups sizeX xs) <> (StudentGroups sizeY ys) =
+      mkStudentGroups (max sizeX sizeY)
+                     (Students $ sum xs + sum ys)
+
+instance Monoid StudentGroups where
+    mempty = StudentGroups 0 []
