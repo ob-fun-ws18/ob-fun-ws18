@@ -140,3 +140,14 @@ instance Semigroup StudentGroups where
 
 instance Monoid StudentGroups where
     mempty = StudentGroups 0 []
+
+
+data Tree a = Leaf
+              | Tree { val :: a, left :: Tree a, right :: Tree a }
+  deriving (Show)
+
+instance Functor Tree where
+  fmap _ Leaf = Leaf
+  fmap f (Tree x left' right') =
+     Tree (f x) (fmap f left') (fmap f right')
+
