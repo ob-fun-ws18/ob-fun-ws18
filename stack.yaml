@@ -1,5 +1,4 @@
-
-resolver: lts-12.18
+resolver: lts-12.25
 
 packages:
-- .
+  - .
