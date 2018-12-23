@@ -1,13 +1,12 @@
 module Main where
 
-import Lib
+import           Lib
 
 main :: IO ()
 main = do
-    name <- getLine
-    let x = 1 + y
-        y = 7
-    putStrLn $ "Hallo " ++ show x ++ " " ++ name
+  let x = 1 + y
+      y = 7
+  putStrLn "Hello from Haskell-Docker."
 
 f :: IO Integer
-f = return $ 1 + 2 
+f = return $ 1 + 2
