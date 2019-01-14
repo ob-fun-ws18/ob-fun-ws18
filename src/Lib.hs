@@ -1,6 +1,9 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Lib where
 
+import           Control.Monad.Writer
+import           Control.Monad.State
+
 someFunc :: IO ()
 someFunc = putStrLn "Super Funktion"
 
@@ -151,3 +154,90 @@ instance Functor Tree where
   fmap f (Tree x left' right') =
      Tree (f x) (fmap f left') (fmap f right')
 
+-- Monads
+
+m = do
+  s <- getLine
+  putStrLn s
+  s <- getLine
+  putStrLn s
+
+m' = getLine >>= (\s -> putStrLn s >> getLine >>= (\s -> putStrLn s))
+
+-- Reader
+
+newtype HumanName = HumanName String
+  deriving Show
+newtype DogName = DogName String
+  deriving Show
+newtype Address = Address String
+  deriving Show
+data Person = Person
+  { humanName :: HumanName
+  , dogName :: DogName
+  , address :: Address
+  }
+  deriving Show
+data Dog = Dog
+  { dogsName :: DogName
+  , dogsAddress :: Address
+  }
+  deriving Show
+
+getDog :: Person -> Dog
+getDog p = Dog (dogName p) (address p)
+
+getDogR :: Person -> Dog
+getDogR = Dog <$> dogName <*> address
+
+getDogM :: Person -> Dog
+getDogM = do
+  dName    <- dogName
+  dAddress <- address
+  return $ Dog dName dAddress
+
+-- Writer
+
+gcd' :: Int -> Int -> Int
+gcd' m n | m == n    = m
+         | m > n     = gcd' (m - n) n
+         | otherwise = gcd' m (n - m)
+
+gcd'' :: Int -> Int -> Writer [String] Int
+gcd'' m n
+  | m == n = return m
+  | m > n = do
+    tell ["Calling gcd'' " ++ show (m - n) ++ " " ++ show n]
+    gcd'' (m - n) n
+  | otherwise = do
+    tell ["Calling gcd'' " ++ show m ++ " " ++ show (n - m)]
+    gcd'' m (n - m)
+
+
+-- State
+
+type Stack = [Int]
+
+pop' :: Stack -> (Int, Stack)
+pop' (x : xs) = (x, xs)
+
+push' :: Int -> Stack -> ((), Stack)
+push' a xs = ((), a : xs)
+
+stackManip :: Stack -> (Int, Stack)
+stackManip stack =
+  let ((), newStack1) = push' 3 stack
+      (a , newStack2) = pop' newStack1
+  in  pop' newStack2
+
+pop :: State Stack Int
+pop = state $ \(x : xs) -> (x, xs)
+
+push :: Int -> State Stack ()
+push a = state $ \xs -> ((), a : xs)
+
+stackManip' :: State Stack Int
+stackManip' = do
+  push 3
+  pop
+  pop
